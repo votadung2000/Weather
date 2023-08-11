@@ -42,3 +42,15 @@ export const ApiGetForecastWeather = body => {
     params,
   });
 };
+
+export const ApiSearchWeather = body => {
+  let params = {
+    key: Config.SECRET_KEY,
+    ...body,
+  };
+  return axios({
+    method: 'get',
+    url: 'search.json',
+    params,
+  });
+};

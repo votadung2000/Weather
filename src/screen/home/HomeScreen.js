@@ -6,6 +6,7 @@ import {
   SafeAreaView,
   Platform,
   Alert,
+  ActivityIndicator,
 } from 'react-native';
 import {
   PERMISSIONS,
@@ -23,6 +24,7 @@ import DailyForecast from './DailyForecast';
 
 const HomeScreen = () => {
   const [dataWeather, setDataWeather] = useState(null);
+  const [isLoading, setLoading] = useState(false);
 
   useEffect(() => {
     checkPermission();
@@ -110,13 +112,16 @@ const HomeScreen = () => {
   };
 
   const handleCallApiCurrentWeather = async body => {
+    setLoading(true);
     try {
       let response = await ApiGetForecastWeather({
         q: `${body?.lat},${body?.lon}`,
       });
 
       setDataWeather(response?.data);
+      setLoading(false);
     } catch (error) {
+      setLoading(false);
       console.log('Home ApiGetForecastWeather', error);
     }
   };
@@ -129,7 +134,7 @@ const HomeScreen = () => {
       <SafeAreaView />
       <View style={styles.container}>
         <View style={styles.layout}>
-          <Search dataSuggest={[1, 2, 3, 4]} />
+          <Search dataSuggest={[1, 2, 3, 4, 5, 6, 7, 8]} />
           <Info
             dataLocation={dataWeather?.location}
             dataCurrent={dataWeather?.current}
@@ -137,6 +142,11 @@ const HomeScreen = () => {
         </View>
         <DailyForecast dataForecast={dataWeather?.forecast} />
       </View>
+      {isLoading && (
+        <View style={styles.vwLoading}>
+          <ActivityIndicator size="large" color={'white'} />
+        </View>
+      )}
     </ImageBackground>
   );
 };
@@ -153,4 +163,13 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   layout: {},
+  vwLoading: {
+    width: '100%',
+    height: '100%',
+    position: 'absolute',
+    alignSelf: 'center',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(9, 52, 58, .3)',
+  },
 });

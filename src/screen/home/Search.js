@@ -10,11 +10,14 @@ import {
   Text,
 } from 'react-native';
 import {scale} from 'react-native-size-matters';
+import {FlatList} from 'react-native-gesture-handler';
 import AntDesign from 'react-native-vector-icons/AntDesign';
+import Entypo from 'react-native-vector-icons/Entypo';
 
 const {width} = Dimensions.get('screen');
 
 const SEARCH_WIDTH = width - scale(40);
+const SUGGEST_HEIGHT = scale(120);
 
 const Search = ({dataSuggest}) => {
   const refSO = useRef(new Animated.Value(0)).current;
@@ -54,6 +57,17 @@ const Search = ({dataSuggest}) => {
     }).start();
   };
 
+  const keyExtractor = (_, index) => index?.toString();
+
+  const renderItem = ({item}) => {
+    return (
+      <TouchableOpacity activeOpacity={0.8} style={styles.stItem}>
+        <Entypo name="location-pin" size={scale(18)} color="#818181" />
+        <Text style={styles.txtCard}>{'1111'}</Text>
+      </TouchableOpacity>
+    );
+  };
+
   return (
     <View style={styles.container}>
       <View
@@ -85,27 +99,26 @@ const Search = ({dataSuggest}) => {
           <AntDesign name="search1" size={scale(18)} color="white" />
         </TouchableOpacity>
       </View>
-      {/* {isSuggest && (
+      {isSuggest && (
         <Animated.View
-          style={[styles.vwSuggest, {
-            opacity: refSO,
-            top: heightVS,
-          }]}>
-          <View style={styles.vwFooter}>
-            {dataSuggest?.map((item, index) => {
-              return (
-                <TouchableOpacity
-                  key={index?.toString()}
-                  activeOpacity={0.8}
-                  style={styles.stItem}
-                >
-                  <Text>{'1111'}</Text>
-                </TouchableOpacity>
-              )
-            })}
-          </View>
+          style={[
+            styles.vwSuggest,
+            {
+              // opacity: refSO,
+              top: heightVS,
+              height: SUGGEST_HEIGHT,
+            },
+          ]}>
+          <FlatList
+            data={dataSuggest}
+            keyExtractor={keyExtractor}
+            renderItem={renderItem}
+            style={styles.stFl}
+            contentContainerStyle={styles.stContentFl}
+            showsVerticalScrollIndicator={false}
+          />
         </Animated.View>
-      )} */}
+      )}
     </View>
   );
 };
@@ -146,23 +159,36 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 16,
   },
-  vwFooter: {
-    flex: 1,
-    borderRadius: scale(20),
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#D0D4DA',
+  vwSuggest: {
+    width: '100%',
+    position: 'absolute',
+    paddingHorizontal: scale(20),
     zIndex: 9999,
   },
-  vwSuggest: {
-    position: 'absolute',
-    width: '100%',
-    aspectRatio: 3,
-    paddingHorizontal: scale(20),
+  stFl: {
+    height: SUGGEST_HEIGHT,
+    backgroundColor: '#D0D4DA',
+    borderRadius: scale(20),
+    paddingHorizontal: scale(15),
+    paddingVertical: scale(10),
+  },
+  stContentFl: {
+    flexGrow: 1,
+    borderColor: 'transparent',
+    paddingBottom: scale(30),
   },
   stItem: {
     width: '100%',
-    backgroundColor: 'red',
+    borderBottomWidth: 1,
+    borderBottomColor: '#818181',
+    paddingBottom: scale(5),
+    marginBottom: scale(10),
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+  },
+  txtCard: {
+    color: '#818181',
   },
 });
 

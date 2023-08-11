@@ -15,6 +15,7 @@
     "@react-navigation/native": "^6.1.7",
     "@react-navigation/stack": "^6.3.17",
     "axios": "^1.4.0",
+    "lodash": "^4.17.21",
     "mobx": "^6.10.0",
     "mobx-react": "^9.0.0",
     "moment": "^2.29.4",
