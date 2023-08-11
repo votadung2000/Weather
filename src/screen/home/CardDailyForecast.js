@@ -2,19 +2,22 @@ import React from 'react';
 import {StyleSheet, Text, View} from 'react-native';
 import {scale} from 'react-native-size-matters';
 import FastImage from 'react-native-fast-image';
+import moment from 'moment';
 
-const CardDailyForecast = () => {
+import {weatherImages} from '../../constants/weatherImages';
+
+const CardDailyForecast = ({data}) => {
   return (
     <View style={styles.container}>
       <View style={styles.vwImg}>
         <FastImage
           style={styles.img}
-          source={require('../../../assets/images/heavyrain.png')}
+          source={weatherImages[data?.day?.condition?.text]}
           resizeMode={FastImage.resizeMode.contain}
         />
       </View>
-      <Text style={styles.txtDay}>Monday</Text>
-      <Text style={styles.temperature}>23&#176;</Text>
+      <Text style={styles.txtDay}>{moment(data?.date).format('dddd')}</Text>
+      <Text style={styles.temperature}>{data?.day?.avgtemp_c}&#176;</Text>
     </View>
   );
 };

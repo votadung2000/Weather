@@ -1,11 +1,126 @@
-import React from 'react';
-import {StyleSheet, View, ImageBackground, SafeAreaView} from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {
+  StyleSheet,
+  View,
+  ImageBackground,
+  SafeAreaView,
+  Platform,
+  Alert,
+} from 'react-native';
+import {
+  PERMISSIONS,
+  RESULTS,
+  openSettings,
+  request,
+} from 'react-native-permissions';
+import Geolocation from '@react-native-community/geolocation';
+
+import {ApiGetForecastWeather} from '../../actions/Api';
 
 import Search from './Search';
 import Info from './Info';
 import DailyForecast from './DailyForecast';
 
 const HomeScreen = () => {
+  const [dataWeather, setDataWeather] = useState(null);
+
+  useEffect(() => {
+    checkPermission();
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const handleConfirm = () => {
+    openSettings();
+  };
+
+  const handleOpenSetting = () => {
+    Alert.alert('Warning', 'Confirm permission to use the location!!', [
+      {
+        text: 'Cancel',
+        style: 'cancel',
+      },
+      {text: 'OK', onPress: () => handleConfirm()},
+    ]);
+  };
+
+  const handleRecheckPermission = () => {
+    request(
+      Platform.OS === 'ios'
+        ? PERMISSIONS.IOS.LOCATION_WHEN_IN_USE
+        : PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION,
+    ).then(result => {
+      if (result === RESULTS.GRANTED) {
+        handleGetGeoLocation();
+      } else {
+        handleOpenSetting();
+      }
+    });
+  };
+
+  const checkPermission = () => {
+    request(
+      Platform.OS === 'ios'
+        ? PERMISSIONS.IOS.LOCATION_WHEN_IN_USE
+        : PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION,
+    )
+      .then(result => {
+        switch (result) {
+          case RESULTS.GRANTED:
+            handleGetGeoLocation();
+            break;
+          case RESULTS.UNAVAILABLE:
+          case RESULTS.DENIED:
+          case RESULTS.LIMITED:
+            handleRecheckPermission();
+            break;
+          case RESULTS.BLOCKED:
+            handleOpenSetting();
+            break;
+        }
+      })
+      .catch(error => console.log(error));
+  };
+
+  const handleGetGeoLocation = () => {
+    Geolocation.getCurrentPosition(
+      result => {
+        handleCallApiCurrentWeather({
+          lat: result?.coords?.latitude,
+          lon: result?.coords?.longitude,
+        });
+      },
+      error => {
+        switch (error.code) {
+          case error.PERMISSION_DENIED:
+            console.log('Người dùng đã từ chối cấp quyền truy cập vị trí.');
+            break;
+          case error.POSITION_UNAVAILABLE:
+            console.log('Thông tin vị trí không khả dụng.');
+            break;
+          case error.TIMEOUT:
+            console.log('Quá thời gian để lấy vị trí.');
+            break;
+          default:
+            console.log('Lỗi không xác định:', error.message);
+        }
+      },
+      {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000},
+    );
+  };
+
+  const handleCallApiCurrentWeather = async body => {
+    try {
+      let response = await ApiGetForecastWeather({
+        q: `${body?.lat},${body?.lon}`,
+      });
+
+      setDataWeather(response?.data);
+    } catch (error) {
+      console.log('Home ApiGetForecastWeather', error);
+    }
+  };
+
   return (
     <ImageBackground
       blurRadius={70}
@@ -14,10 +129,13 @@ const HomeScreen = () => {
       <SafeAreaView />
       <View style={styles.container}>
         <View style={styles.layout}>
-          <Search />
-          <Info />
+          <Search dataSuggest={[1, 2, 3, 4]} />
+          <Info
+            dataLocation={dataWeather?.location}
+            dataCurrent={dataWeather?.current}
+          />
         </View>
-        <DailyForecast />
+        <DailyForecast dataForecast={dataWeather?.forecast} />
       </View>
     </ImageBackground>
   );

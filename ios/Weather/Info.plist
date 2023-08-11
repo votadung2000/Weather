@@ -35,10 +35,14 @@
 			</dict>
 		</dict>
 	</dict>
-	<key>NSLocationWhenInUseUsageDescription</key>
-	<string></string>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+  	<string>We need to retrieve location information in order to fetch the most relevant data.</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+  	<string>We need to retrieve location information in order to fetch the most relevant data.</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+  	<string>We need to retrieve location information in order to fetch the most relevant data.</string>
 	<key>UIRequiredDeviceCapabilities</key>
 	<array>
 		<string>armv7</string>

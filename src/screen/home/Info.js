@@ -1,34 +1,39 @@
 import React from 'react';
 import {StyleSheet, Text, View} from 'react-native';
-import FastImage from 'react-native-fast-image';
 import {scale} from 'react-native-size-matters';
+import FastImage from 'react-native-fast-image';
+import moment from 'moment';
+
+import {weatherImages} from '../../constants/weatherImages';
 
 import CardInfo from './CardInfo';
 
-const Info = () => {
+const Info = ({dataLocation, dataCurrent}) => {
   return (
     <View style={styles.container}>
-      <Text style={styles.txtLocation}>Location</Text>
+      <Text style={styles.txtLocation}>
+        {`${dataLocation?.name}, ${dataLocation?.country}`}
+      </Text>
       <View style={styles.vwImg}>
         <FastImage
           style={styles.img}
-          source={require('../../../assets/images/partlycloudy.png')}
+          source={weatherImages[dataCurrent?.condition?.text]}
           resizeMode={FastImage.resizeMode.contain}
         />
       </View>
-      <Text style={styles.temperature}>23&#176;</Text>
-      <Text style={styles.type}>Type</Text>
+      <Text style={styles.temperature}>{dataCurrent?.temp_c}&#176;</Text>
+      <Text style={styles.type}>{dataCurrent?.condition?.text}</Text>
       <View style={styles.infoOther}>
         <CardInfo
-          value={'22Km'}
+          value={dataCurrent?.wind_kph}
           uri={require('../../../assets/images/wind.png')}
         />
         <CardInfo
-          value={'23%'}
+          value={dataCurrent?.humidity}
           uri={require('../../../assets/images/drop.png')}
         />
         <CardInfo
-          value={'6:05 Am'}
+          value={moment(dataCurrent?.last_updated).format('LT')}
           uri={require('../../../assets/images/sun.png')}
         />
       </View>

@@ -5,11 +5,11 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 
 import CardDailyForecast from './CardDailyForecast';
 
-const DailyForecast = () => {
+const DailyForecast = ({dataForecast}) => {
   const keyExtractor = (_, index) => index?.toString();
 
-  const renderItem = () => {
-    return <CardDailyForecast />;
+  const renderItem = ({item}) => {
+    return <CardDailyForecast data={item} />;
   };
 
   return (
@@ -20,7 +20,7 @@ const DailyForecast = () => {
       </View>
       <FlatList
         horizontal
-        data={[1, 2, 3, 4, 5, 6, 7]}
+        data={dataForecast?.forecastday}
         keyExtractor={keyExtractor}
         renderItem={renderItem}
         style={styles.stList}
