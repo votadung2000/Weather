@@ -48,8 +48,8 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   vwImg: {
-    marginTop: scale(20),
-    marginBottom: scale(20),
+    marginTop: scale(30),
+    marginBottom: scale(30),
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -64,13 +64,13 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   type: {
-    marginTop: scale(5),
+    marginTop: scale(20),
     fontSize: 16,
     color: 'white',
     textAlign: 'center',
   },
   infoOther: {
-    marginTop: scale(20),
+    marginTop: scale(30),
     paddingHorizontal: scale(10),
     flexDirection: 'row',
     justifyContent: 'space-between',

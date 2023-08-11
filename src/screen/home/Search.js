@@ -80,7 +80,7 @@ const Search = () => {
 
 const styles = StyleSheet.create({
   container: {
-    marginTop: scale(25),
+    marginTop: scale(10),
     justifyContent: 'center',
     alignItems: 'flex-end',
     marginRight: scale(20),
@@ -105,7 +105,7 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
   },
   input: {
-    marginLeft: scale(10),
+    marginLeft: scale(15),
     width: '80%',
     color: 'white',
     fontSize: 16,

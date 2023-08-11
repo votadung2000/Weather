@@ -1,23 +1,24 @@
 import React from 'react';
-import {StyleSheet, SafeAreaView, Platform, StatusBar} from 'react-native';
+import {StyleSheet, StatusBar, View} from 'react-native';
 
 import HomeScreen from './src/screen/home/HomeScreen';
 
 const App = () => {
   return (
-    <SafeAreaView style={styles.container}>
-      {Platform.OS === 'android' && (
-        <StatusBar animated barStyle="light-content" />
-      )}
+    <View style={styles.container}>
+      <StatusBar
+        animated
+        barStyle="light-content"
+        backgroundColor={'#09343A'}
+      />
       <HomeScreen />
-    </SafeAreaView>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'white',
   },
 });
 

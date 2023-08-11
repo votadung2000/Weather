@@ -1,5 +1,5 @@
 import React from 'react';
-import {StyleSheet, View, ImageBackground} from 'react-native';
+import {StyleSheet, View, ImageBackground, SafeAreaView} from 'react-native';
 
 import Search from './Search';
 import Info from './Info';
@@ -11,6 +11,7 @@ const HomeScreen = () => {
       blurRadius={70}
       source={require('../../../assets/images/bg.png')}
       style={styles.bgImg}>
+      <SafeAreaView />
       <View style={styles.container}>
         <View style={styles.layout}>
           <Search />
