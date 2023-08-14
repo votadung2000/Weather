@@ -7,6 +7,13 @@ import moment from 'moment';
 import {weatherImages} from '../../constants/weatherImages';
 
 const CardDailyForecast = ({data}) => {
+  const shortString = value => {
+    if (value?.length > 7) {
+      return value?.slice(0, 7) + '..';
+    }
+    return value;
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.vwImg}>
@@ -16,7 +23,9 @@ const CardDailyForecast = ({data}) => {
           resizeMode={FastImage.resizeMode.contain}
         />
       </View>
-      <Text style={styles.txtDay}>{moment(data?.date).format('dddd')}</Text>
+      <Text style={styles.txtDay}>
+        {shortString(moment(data?.date).format('dddd'))}
+      </Text>
       <Text style={styles.temperature}>{data?.day?.avgtemp_c}&#176;</Text>
     </View>
   );
@@ -24,9 +33,11 @@ const CardDailyForecast = ({data}) => {
 
 const styles = StyleSheet.create({
   container: {
+    width: scale(70),
     marginEnd: scale(20),
     backgroundColor: 'rgba(255, 255, 255, .3)',
     padding: scale(10),
+    paddingHorizontal: scale(10),
     borderRadius: scale(10),
   },
   vwImg: {

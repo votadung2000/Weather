@@ -1,4 +1,4 @@
-import React, {useRef, useState} from 'react';
+import React, {useCallback, useRef, useState} from 'react';
 import {
   StyleSheet,
   TextInput,
@@ -10,22 +10,26 @@ import {
   Text,
 } from 'react-native';
 import {scale} from 'react-native-size-matters';
+import {debounce} from 'lodash';
 import {FlatList} from 'react-native-gesture-handler';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Entypo from 'react-native-vector-icons/Entypo';
+import {ApiSearchWeather} from '../../actions/Api';
 
 const {width} = Dimensions.get('screen');
 
 const SEARCH_WIDTH = width - scale(40);
-const SUGGEST_HEIGHT = scale(120);
+const SUGGEST_HEIGHT = scale(150);
 
-const Search = ({dataSuggest}) => {
+const Search = ({handleChangeWithSearch}) => {
   const refSO = useRef(new Animated.Value(0)).current;
   const refSW = useRef(new Animated.Value(0)).current;
+  const refSuggestH = useRef(new Animated.Value(0)).current;
 
   const [isFade, setFade] = useState(true);
-  const [isSuggest, setSuggest] = useState(false);
   const [heightVS, setHeightVS] = useState(0);
+  const [valueSearch, setValueSearch] = useState(null);
+  const [dataSuggest, setDataSuggest] = useState(null);
 
   const clickOpenSearch = () => {
     if (isFade) {
@@ -36,7 +40,6 @@ const Search = ({dataSuggest}) => {
       fadeSW(0);
     }
     setFade(prev => !prev);
-    setSuggest(prev => !prev);
   };
 
   const fadeSO = value => {
@@ -57,13 +60,77 @@ const Search = ({dataSuggest}) => {
     }).start();
   };
 
+  const displaySuggest = () => {
+    if (valueSearch?.length > 0 && dataSuggest?.length > 0) {
+      let convertH = 0;
+      switch (dataSuggest?.length) {
+        case 1:
+          convertH = Number.parseFloat(SUGGEST_HEIGHT / 3).toFixed(2);
+          break;
+        case 2:
+          convertH = Number.parseFloat(SUGGEST_HEIGHT / 2).toFixed(2);
+          break;
+        default:
+          convertH = SUGGEST_HEIGHT;
+          break;
+      }
+      Animated.timing(refSuggestH, {
+        toValue: convertH,
+        duration: 300,
+        easing: Easing.circle,
+        useNativeDriver: false,
+      }).start();
+      return true;
+    } else {
+      Animated.timing(refSuggestH, {
+        toValue: 0,
+        duration: 300,
+        useNativeDriver: false,
+      }).start();
+      setTimeout(() => {
+        return false;
+      }, 300);
+    }
+  };
+
+  const fetchApiSearchWeather = useCallback(
+    debounce(async text => {
+      try {
+        let response = await ApiSearchWeather({
+          q: text,
+        });
+        setDataSuggest(response?.data);
+      } catch (error) {}
+    }, 400),
+    [],
+  );
+
+  const onChangeSearch = text => {
+    setValueSearch(text);
+    if (text?.length > 0) {
+      fetchApiSearchWeather(text);
+    }
+  };
+
+  const clickCardSearch = item => {
+    handleChangeWithSearch({
+      lat: item?.lat,
+      lon: item?.lon,
+    });
+    setValueSearch(null);
+    setDataSuggest(null);
+  };
+
   const keyExtractor = (_, index) => index?.toString();
 
   const renderItem = ({item}) => {
     return (
-      <TouchableOpacity activeOpacity={0.8} style={styles.stItem}>
+      <TouchableOpacity
+        activeOpacity={0.8}
+        style={styles.stItem}
+        onPress={() => clickCardSearch(item)}>
         <Entypo name="location-pin" size={scale(18)} color="#818181" />
-        <Text style={styles.txtCard}>{'1111'}</Text>
+        <Text style={styles.txtCard}>{`${item?.name}, ${item?.country}`}</Text>
       </TouchableOpacity>
     );
   };
@@ -72,7 +139,6 @@ const Search = ({dataSuggest}) => {
     <View style={styles.container}>
       <View
         onLayout={event => {
-          // refHVS.current = event.nativeEvent.layout?.height
           setHeightVS(event.nativeEvent.layout?.height);
         }}
         style={styles.content}>
@@ -85,8 +151,8 @@ const Search = ({dataSuggest}) => {
             },
           ]}>
           <TextInput
-            // onChangeText={onChangeNumber}
-            // value={number}
+            value={valueSearch}
+            onChangeText={onChangeSearch}
             placeholder="Search"
             placeholderTextColor={'rgba(255, 255, 255, .5)'}
             style={styles.input}
@@ -96,17 +162,20 @@ const Search = ({dataSuggest}) => {
           activeOpacity={0.8}
           onPress={clickOpenSearch}
           style={styles.btnSearch}>
-          <AntDesign name="search1" size={scale(18)} color="white" />
+          <AntDesign
+            name={isFade ? 'search1' : 'close'}
+            size={scale(18)}
+            color="white"
+          />
         </TouchableOpacity>
       </View>
-      {isSuggest && (
+      {displaySuggest() && (
         <Animated.View
           style={[
             styles.vwSuggest,
             {
-              // opacity: refSO,
               top: heightVS,
-              height: SUGGEST_HEIGHT,
+              height: refSuggestH,
             },
           ]}>
           <FlatList
@@ -129,7 +198,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'flex-end',
     zIndex: 9999,
-    // alignItems: 'center',
   },
   content: {
     marginRight: scale(20),
@@ -175,7 +243,7 @@ const styles = StyleSheet.create({
   stContentFl: {
     flexGrow: 1,
     borderColor: 'transparent',
-    paddingBottom: scale(30),
+    paddingBottom: scale(15),
   },
   stItem: {
     width: '100%',

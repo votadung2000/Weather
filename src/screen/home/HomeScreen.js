@@ -61,6 +61,8 @@ const HomeScreen = () => {
   };
 
   const checkPermission = () => {
+    setLoading(true);
+
     request(
       Platform.OS === 'ios'
         ? PERMISSIONS.IOS.LOCATION_WHEN_IN_USE
@@ -113,6 +115,7 @@ const HomeScreen = () => {
 
   const handleCallApiCurrentWeather = async body => {
     setLoading(true);
+
     try {
       let response = await ApiGetForecastWeather({
         q: `${body?.lat},${body?.lon}`,
@@ -122,7 +125,6 @@ const HomeScreen = () => {
       setLoading(false);
     } catch (error) {
       setLoading(false);
-      console.log('Home ApiGetForecastWeather', error);
     }
   };
 
@@ -134,7 +136,7 @@ const HomeScreen = () => {
       <SafeAreaView />
       <View style={styles.container}>
         <View style={styles.layout}>
-          <Search dataSuggest={[1, 2, 3, 4, 5, 6, 7, 8]} />
+          <Search handleChangeWithSearch={handleCallApiCurrentWeather} />
           <Info
             dataLocation={dataWeather?.location}
             dataCurrent={dataWeather?.current}
