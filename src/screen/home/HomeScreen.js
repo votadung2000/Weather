@@ -65,7 +65,7 @@ const HomeScreen = () => {
 
     request(
       Platform.OS === 'ios'
-        ? PERMISSIONS.IOS.LOCATION_WHEN_IN_USE
+        ? PERMISSIONS.IOS.LOCATION_ALWAYS
         : PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION,
     )
       .then(result => {
