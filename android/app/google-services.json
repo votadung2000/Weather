@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "293416128670",
+    "project_id": "fbweather-849dc",
+    "storage_bucket": "fbweather-849dc.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:293416128670:android:e49a11b1814ad3f10a6b8f",
+        "android_client_info": {
+          "package_name": "com.weather"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA9CgKu3utLkWlipIhGBI1bNLr6xXaaby4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
