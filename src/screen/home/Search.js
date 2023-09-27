@@ -14,6 +14,7 @@ import {debounce} from 'lodash';
 import {FlatList} from 'react-native-gesture-handler';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Entypo from 'react-native-vector-icons/Entypo';
+
 import {ApiSearchWeather} from '../../actions/Api';
 
 const {width} = Dimensions.get('screen');
